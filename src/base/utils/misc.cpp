@@ -356,7 +356,7 @@ QString Utils::Misc::friendlyUnit(qint64 bytesValue, bool isSpeed)
         return QCoreApplication::translate("misc", "Unknown", "Unknown (size)");
     QString ret;
     if (unit == SizeUnit::Byte)
-        ret = QString::number(bytesValue) + " " + unitString(unit);
+        ret = QString::number(bytesValue) + " " + unitString(unit);
     else
         ret = Utils::String::fromDouble(friendlyVal, 1) + " " + unitString(unit);
     if (isSpeed)
