@@ -117,8 +117,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>497</width>
-             <height>880</height>
+             <width>542</width>
+             <height>1120</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -295,6 +295,11 @@
                     </item>
                     <item>
                      <property name="text">
+                      <string>Rename Torrent</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
                       <string>No action</string>
                      </property>
                     </item>
@@ -317,6 +322,11 @@
                     <item>
                      <property name="text">
                       <string>Open destination folder</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Rename Torrent</string>
                      </property>
                     </item>
                     <item>
@@ -385,7 +395,7 @@
                <item>
                 <widget class="QGroupBox" name="checkShowSystray">
                  <property name="title">
-                  <string>Show qBittorrent in notification area</string>
+                  <string>Show &amp;qBittorrent in notification area</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -486,7 +496,7 @@
             <item>
              <widget class="QGroupBox" name="checkFileLog">
               <property name="title">
-               <string>Log file</string>
+               <string>&amp;Log file</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -673,8 +683,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>1118</height>
+             <width>676</width>
+             <height>1339</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
@@ -1348,8 +1358,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>457</width>
-             <height>672</height>
+             <width>498</width>
+             <height>833</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1821,8 +1831,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>388</width>
-             <height>452</height>
+             <width>406</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -2208,8 +2218,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>574</width>
-             <height>534</height>
+             <width>631</width>
+             <height>650</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2605,8 +2615,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>438</width>
-             <height>543</height>
+             <width>500</width>
+             <height>643</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">

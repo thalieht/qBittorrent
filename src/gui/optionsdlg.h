@@ -44,6 +44,7 @@ enum DoubleClickAction
 {
     TOGGLE_PAUSE,
     OPEN_DEST,
+    RENAME_TORRENT,
     NO_ACTION
 };
 

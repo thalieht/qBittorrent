@@ -232,6 +232,9 @@ void TransferListWidget::torrentDoubleClicked(const QModelIndex& index)
         else
             Utils::Misc::openPath(torrent->contentPath(true));
         break;
+    case RENAME_TORRENT:
+        renameSelectedTorrent();
+        break;
     }
 }
 
