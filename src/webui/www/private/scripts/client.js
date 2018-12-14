@@ -23,6 +23,7 @@
  */
 
 torrentsTable = new TorrentsTable();
+torrentTrackersTable = new TorrentTrackersTable();
 torrentPeersTable = new TorrentPeersTable();
 searchResultsTable = new SearchResultsTable();
 searchPluginsTable = new SearchPluginsTable();
