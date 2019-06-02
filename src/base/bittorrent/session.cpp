@@ -1021,6 +1021,21 @@ void Session::configure()
     qDebug("Session configured");
 }
 
+void Session::toggleSessionState()
+{
+    if (isSessionPaused())
+        m_nativeSession->resume();
+    else
+        m_nativeSession->pause();
+
+    emit sessionStateToggled();
+}
+
+bool Session::isSessionPaused() const
+{
+    return m_nativeSession->is_paused();
+}
+
 void Session::processBannedIPs(libt::ip_filter &filter)
 {
     // First, import current filter

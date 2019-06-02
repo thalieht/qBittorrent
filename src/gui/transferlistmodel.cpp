@@ -390,6 +390,8 @@ QColor getColorByState(BitTorrent::TorrentState state)
             return {0, 0, 139}; // Dark Blue
         else
             return {79, 148, 205}; // Steel Blue 3
+    case BitTorrent::TorrentState::PausedSession:
+        return {255, 165, 0};
     case BitTorrent::TorrentState::Error:
     case BitTorrent::TorrentState::MissingFiles:
         return {255, 0, 0}; // red

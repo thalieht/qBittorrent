@@ -286,6 +286,9 @@ namespace BitTorrent
         void setAltGlobalSpeedLimitEnabled(bool enabled);
         bool isBandwidthSchedulerEnabled() const;
         void setBandwidthSchedulerEnabled(bool enabled);
+        
+        void toggleSessionState();
+        bool isSessionPaused() const;
 
         uint saveResumeDataInterval() const;
         void setSaveResumeDataInterval(uint value);
@@ -452,6 +455,7 @@ namespace BitTorrent
         void handleTorrentTrackerError(TorrentHandle *const torrent, const QString &trackerUrl);
 
     signals:
+        void sessionStateToggled();
         void statsUpdated();
         void torrentsUpdated();
         void addTorrentFailed(const QString &error);

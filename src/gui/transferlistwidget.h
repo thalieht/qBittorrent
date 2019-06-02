@@ -59,8 +59,6 @@ public slots:
     void removeSelectionTag(const QString &tag);
     void clearSelectionTags();
     void setSelectedTorrentsLocation();
-    void pauseAllTorrents();
-    void resumeAllTorrents();
     void startSelectedTorrents();
     void forceStartSelectedTorrents();
     void startVisibleTorrents();
@@ -94,6 +92,7 @@ public slots:
     void applyTrackerFilter(const QStringList &hashes);
     void previewFile(const QString &filePath);
     void renameSelectedTorrent();
+    void toggleSessionPausedState();
 
 protected:
     QModelIndex mapToSource(const QModelIndex &index) const;

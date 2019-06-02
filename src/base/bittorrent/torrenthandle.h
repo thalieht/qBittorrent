@@ -124,7 +124,9 @@ namespace BitTorrent
         Moving,
 
         MissingFiles,
-        Error
+        Error,
+
+        PausedSession
     };
 
     class TorrentHandle : public QObject

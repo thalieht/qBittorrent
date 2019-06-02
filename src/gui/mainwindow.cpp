@@ -95,6 +95,8 @@
 #include "transferlistwidget.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
+#include <QGraphicsOpacityEffect>
+#include <QGraphicsItem>
 
 #ifdef Q_OS_WIN
 #include "base/net/downloadmanager.h"
@@ -168,6 +170,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     addToolbarContextMenu();
 
+    m_actionPauseResumeSession = new QAction(this);
+    updateSessionStateAction();
+
     m_ui->actionOpen->setIcon(GuiIconProvider::instance()->getIcon("list-add"));
     m_ui->actionDownloadFromURL->setIcon(GuiIconProvider::instance()->getIcon("insert-link"));
     m_ui->actionSetUploadLimit->setIcon(GuiIconProvider::instance()->getIcon("kt-set-max-upload-speed"));
@@ -188,9 +193,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->actionLock->setIcon(GuiIconProvider::instance()->getIcon("object-locked"));
     m_ui->actionOptions->setIcon(GuiIconProvider::instance()->getIcon("configure", "preferences-system"));
     m_ui->actionPause->setIcon(GuiIconProvider::instance()->getIcon("media-playback-pause"));
-    m_ui->actionPauseAll->setIcon(GuiIconProvider::instance()->getIcon("media-playback-pause"));
     m_ui->actionStart->setIcon(GuiIconProvider::instance()->getIcon("media-playback-start"));
-    m_ui->actionStartAll->setIcon(GuiIconProvider::instance()->getIcon("media-playback-start"));
+
     m_ui->menuAutoShutdownOnDownloadsCompletion->setIcon(GuiIconProvider::instance()->getIcon("application-exit"));
     m_ui->actionManageCookies->setIcon(GuiIconProvider::instance()->getIcon("preferences-web-browser-cookies"));
 
@@ -202,6 +206,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->actionLock->setMenu(lockMenu);
 
     // Creating Bittorrent session
+    connect(BitTorrent::Session::instance(), &BitTorrent::Session::sessionStateToggled, this, &MainWindow::updateSessionStateAction);
     connect(BitTorrent::Session::instance(), &BitTorrent::Session::fullDiskError, this, &MainWindow::fullDiskError);
     connect(BitTorrent::Session::instance(), &BitTorrent::Session::addTorrentFailed, this, &MainWindow::addTorrentFailed);
     connect(BitTorrent::Session::instance(), &BitTorrent::Session::torrentNew,this, &MainWindow::torrentNew);
@@ -275,6 +280,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_prioSeparator = m_ui->toolBar->insertSeparator(m_ui->actionTopPriority);
     m_prioSeparatorMenu = m_ui->menuEdit->insertSeparator(m_ui->actionTopPriority);
 
+    m_ui->toolBar->insertAction(m_ui->actionOptions, m_actionPauseResumeSession);
+    m_ui->toolBar->insertSeparator(m_ui->actionOptions);
+
+    m_ui->menuEdit->addSeparator();
+    m_ui->menuEdit->addAction(m_actionPauseResumeSession);
+
 #ifdef Q_OS_MAC
     for (QAction *action : asConst(m_ui->toolBar->actions())) {
         if (action->isSeparator()) {
@@ -301,9 +312,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Transfer list slots
     connect(m_ui->actionStart, &QAction::triggered, m_transferListWidget, &TransferListWidget::startSelectedTorrents);
-    connect(m_ui->actionStartAll, &QAction::triggered, m_transferListWidget, &TransferListWidget::resumeAllTorrents);
     connect(m_ui->actionPause, &QAction::triggered, m_transferListWidget, &TransferListWidget::pauseSelectedTorrents);
-    connect(m_ui->actionPauseAll, &QAction::triggered, m_transferListWidget, &TransferListWidget::pauseAllTorrents);
+    connect(m_actionPauseResumeSession, &QAction::triggered, m_transferListWidget, &TransferListWidget::toggleSessionPausedState);
     connect(m_ui->actionDelete, &QAction::triggered, m_transferListWidget, &TransferListWidget::softDeleteSelectedTorrents);
     connect(m_ui->actionTopPriority, &QAction::triggered, m_transferListWidget, &TransferListWidget::topPrioSelectedTorrents);
     connect(m_ui->actionIncreasePriority, &QAction::triggered, m_transferListWidget, &TransferListWidget::increasePrioSelectedTorrents);
@@ -466,6 +476,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupDockClickHandler();
     trayIconMenu()->setAsDockMenu();
 #endif
+  //  m_transferListWidget->setWindowOpacity(0.1);
 }
 
 MainWindow::~MainWindow()
@@ -881,13 +892,12 @@ void MainWindow::createKeyboardShortcuts()
     m_ui->actionDocumentation->setShortcut(QKeySequence::HelpContents);
     m_ui->actionOptions->setShortcut(Qt::ALT + Qt::Key_O);
     m_ui->actionStart->setShortcut(Qt::CTRL + Qt::Key_S);
-    m_ui->actionStartAll->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S);
     m_ui->actionPause->setShortcut(Qt::CTRL + Qt::Key_P);
-    m_ui->actionPauseAll->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
     m_ui->actionBottomPriority->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Minus);
     m_ui->actionDecreasePriority->setShortcut(Qt::CTRL + Qt::Key_Minus);
     m_ui->actionIncreasePriority->setShortcut(Qt::CTRL + Qt::Key_Plus);
     m_ui->actionTopPriority->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Plus);
+    m_actionPauseResumeSession->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_S);
 #ifdef Q_OS_MAC
     m_ui->actionMinimize->setShortcut(Qt::CTRL + Qt::Key_M);
     addAction(m_ui->actionMinimize);
@@ -1682,8 +1692,7 @@ QMenu *MainWindow::trayIconMenu()
     m_trayIconMenu->addAction(m_ui->actionSetGlobalDownloadLimit);
     m_trayIconMenu->addAction(m_ui->actionSetGlobalUploadLimit);
     m_trayIconMenu->addSeparator();
-    m_trayIconMenu->addAction(m_ui->actionStartAll);
-    m_trayIconMenu->addAction(m_ui->actionPauseAll);
+    m_trayIconMenu->addAction(m_actionPauseResumeSession);
 #ifndef Q_OS_MAC
     m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(m_ui->actionExit);
@@ -1697,6 +1706,30 @@ QMenu *MainWindow::trayIconMenu()
 void MainWindow::updateAltSpeedsBtn(bool alternative)
 {
     m_ui->actionUseAlternativeSpeedLimits->setChecked(alternative);
+}
+
+void MainWindow::updateSessionStateAction()
+{
+//    if (BitTorrent::Session::instance()->isSessionPaused()) {
+//        m_ui->actionPauseResumeSessionState->setText(tr("Resume Session"));
+//        m_ui->actionPauseResumeSessionState->setToolTip(tr("Resume Session"));
+//        m_ui->actionPauseResumeSessionState->setIcon(GuiIconProvider::instance()->getIcon("media-playback-start"));
+//    }
+//    else {
+//        m_ui->actionPauseResumeSessionState->setText(tr("Pause Session"));
+//        m_ui->actionPauseResumeSessionState->setToolTip(tr("Pause Session"));
+//        m_ui->actionPauseResumeSessionState->setIcon(GuiIconProvider::instance()->getIcon("media-playback-pause"));
+//    }
+    if (BitTorrent::Session::instance()->isSessionPaused()) {
+        m_actionPauseResumeSession->setText(tr("Resume Session"));
+        m_actionPauseResumeSession->setToolTip(tr("Resume Session"));
+        m_actionPauseResumeSession->setIcon(GuiIconProvider::instance()->getIcon("media-playback-start"));
+    }
+    else {
+        m_actionPauseResumeSession->setText(tr("Pause Session"));
+        m_actionPauseResumeSession->setToolTip(tr("Pause Session"));
+        m_actionPauseResumeSession->setIcon(GuiIconProvider::instance()->getIcon("media-playback-pause"));
+    }
 }
 
 PropertiesWidget *MainWindow::propertiesWidget() const

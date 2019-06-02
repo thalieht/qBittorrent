@@ -822,6 +822,9 @@ void TorrentHandle::updateState()
         if (m_session->isQueueingSystemEnabled() && isQueued() && !isChecking()) {
             m_state = isSeed() ? TorrentState::QueuedUploading : TorrentState::QueuedDownloading;
         }
+        else if (m_session->isSessionPaused()) {
+            m_state = TorrentState::PausedSession;
+        }
         else {
             switch (m_nativeStatus.state) {
             case libt::torrent_status::finished:

@@ -427,18 +427,6 @@ void TransferListWidget::setSelectedTorrentsLocation()
     }
 }
 
-void TransferListWidget::pauseAllTorrents()
-{
-    for (BitTorrent::TorrentHandle *const torrent : asConst(BitTorrent::Session::instance()->torrents()))
-        torrent->pause();
-}
-
-void TransferListWidget::resumeAllTorrents()
-{
-    for (BitTorrent::TorrentHandle *const torrent : asConst(BitTorrent::Session::instance()->torrents()))
-        torrent->resume();
-}
-
 void TransferListWidget::startSelectedTorrents()
 {
     for (BitTorrent::TorrentHandle *const torrent : asConst(getSelectedTorrents()))
@@ -713,6 +701,11 @@ void TransferListWidget::reannounceSelectedTorrents()
 {
     for (BitTorrent::TorrentHandle *const torrent : asConst(getSelectedTorrents()))
         torrent->forceReannounce();
+}
+
+void TransferListWidget::toggleSessionPausedState()
+{
+    BitTorrent::Session::instance()->toggleSessionState();
 }
 
 // hide/show columns menu

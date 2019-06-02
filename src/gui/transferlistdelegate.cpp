@@ -275,6 +275,9 @@ QString TransferListDelegate::getStatusString(const BitTorrent::TorrentState sta
     case BitTorrent::TorrentState::Error:
         str = tr("Errored", "torrent status, the torrent has an error");
         break;
+    case BitTorrent::TorrentState::PausedSession:
+        str = tr("Session Paused");
+        break;
     default:
         str = "";
     }
